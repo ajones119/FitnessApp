@@ -10,6 +10,7 @@ import {
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
 import "./index.css";
+import useAuthStore from './service/auth';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,11 +37,12 @@ declare module '@tanstack/react-router' {
 }
 
 function App() {
+  const auth = useAuthStore();
 
   return (
     <>
       <QueryClientProvider client={queryClient}>
-              <RouterProvider router={router} context={{}} />
+            <RouterProvider router={router} context={{auth}} />
             <ToastContainer
               position="bottom-center"
               autoClose={3000}
