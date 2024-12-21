@@ -36,9 +36,38 @@ body {
   min-height: 100vh;
 }
 
+p {
+  font-size: clamp(1.25rem, 1.15rem + 0.45vw, 1.5rem);
+}
+
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  margin: 0;
+  font-size: clamp(2.5rem, 2.15rem + 0.95vw, 2.75rem);
+}
+
+h2 {
+  margin: 0;
+  font-size: clamp(2.25rem, 2rem + 0.85vw, 2.5rem);
+}
+
+h3 {
+  margin: 0;
+  font-size: clamp(2rem, 1.85rem + 0.75vw, 2.25rem);
+}
+
+h4 {
+  margin: 0;
+  font-size: clamp(1.75rem, 1.7rem + 0.65vw, 2rem);
+}
+
+h5 {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.25rem + 0.5vw, 1.75rem);
+}
+
+h6 {
+  margin: 0;
+  font-size: clamp(1rem, 0.95rem + 0.4vw, 1.125rem);
 }
 
 button {
@@ -75,58 +104,100 @@ button:focus-visible {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    /* Core Theme Colors */
+    --background: #f3f4f6; /* Light grayish-blue */
+    --foreground: #1e293b; /* Dark grayish-blue text */
+    --card: #e5e7eb; /* Slightly darker grayish-blue for cards */
+    --card-foreground: #1e293b; /* Same as foreground */
+  
+    --popover: #edf2f7; /* Popover background */
+    --popover-foreground: #1e293b; /* Popover text */
+  
+    /* Primary Colors */
+    --primary: #ef4444; /* Motivational red */
+    --primary-foreground: #ffffff; /* White text */
+  
+    /* Secondary Colors */
+    --secondary: #3b82f6; /* Bright blue */
+    --secondary-foreground: #ffffff; /* White text */
+  
+    /* Muted Colors */
+    --muted: #d1d5db; /* Muted gray */
+    --muted-foreground: #4b5563; /* Text in muted components */
+  
+    /* Accent Colors */
+    --accent: #10b981; /* Bright green */
+    --accent-foreground: #ffffff; /* White text */
+  
+    /* Destructive Colors */
+    --destructive: #f43f5e; /* Bright red */
+    --destructive-foreground: #ffffff; /* White text */
+  
+    /* Borders and Input */
+    --border: #e5e7eb; /* Light gray for borders */
+    --input: #f3f4f6; /* Light input background */
+  
+    /* Ring (focus/outline) */
+    --ring: #ef4444; /* Red ring for focus state */
+  
+    /* Chart Colors */
+    --chart-1: #ef4444; /* Gladiator red */
+    --chart-2: #3b82f6; /* Cool blue */
+    --chart-3: #10b981; /* Vibrant green */
+    --chart-4: #f59e0b; /* Energetic yellow */
+    --chart-5: #8b5cf6; /* Competitive purple */
   }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+  
+
+/* Dark Mode Colors */
+@media (prefers-color-scheme: dark) {
+    :root {
+      /* Core Theme Colors */
+      --background: #1e293b; /* Dark background */
+      --foreground: #f3f4f6; /* Light gray text */
+      --card: #374151; /* Darker card background */
+      --card-foreground: #f3f4f6; /* Light text on cards */
+  
+      --popover: #1f2937; /* Popover background */
+      --popover-foreground: #e2e8f0; /* Popover text */
+  
+      /* Primary Colors */
+      --primary: #ef4444; /* Same motivational red */
+      --primary-foreground: #ffffff; /* White text */
+  
+      /* Secondary Colors */
+      --secondary: #3b82f6; /* Same bright blue */
+      --secondary-foreground: #ffffff; /* White text */
+  
+      /* Muted Colors */
+      --muted: #374151; /* Dark muted background */
+      --muted-foreground: #9ca3af; /* Light muted text */
+  
+      /* Accent Colors */
+      --accent: #10b981; /* Same bright green */
+      --accent-foreground: #ffffff; /* White text */
+  
+      /* Destructive Colors */
+      --destructive: #f43f5e; /* Same bright red */
+      --destructive-foreground: #ffffff; /* White text */
+  
+      /* Borders and Input */
+      --border: #4b5563; /* Darker border */
+      --input: #374151; /* Darker input background */
+  
+      /* Ring (focus/outline) */
+      --ring: #ef4444; /* Same red ring */
+  
+      /* Chart Colors */
+      --chart-1: #ef4444; /* Same chart colors */
+      --chart-2: #3b82f6;
+      --chart-3: #10b981;
+      --chart-4: #f59e0b;
+      --chart-5: #8b5cf6;
+    }
   }
+  
+
 }
 
 @layer base {

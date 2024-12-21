@@ -8,41 +8,50 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as MainImport } from './routes/main'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
-import { Route as AuthenticatedRoute1Import } from './routes/_authenticated/route1'
-
-// Create Virtual Routes
-
-const IndexLazyImport = createFileRoute('/')()
+import { Route as IndexImport } from './routes/index'
+import { Route as AuthenticatedDashboardImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedMacrosIndexImport } from './routes/_authenticated/macros/index'
+import { Route as AuthenticatedLiftingIndexImport } from './routes/_authenticated/lifting/index'
+import { Route as AuthenticatedCardioIndexImport } from './routes/_authenticated/cardio/index'
 
 // Create/Update Routes
-
-const MainRoute = MainImport.update({
-  id: '/main',
-  path: '/main',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const AuthenticatedRoute = AuthenticatedImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexLazyRoute = IndexLazyImport.update({
+const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any)
 
-const AuthenticatedRoute1Route = AuthenticatedRoute1Import.update({
-  id: '/route1',
-  path: '/route1',
+const AuthenticatedDashboardRoute = AuthenticatedDashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedMacrosIndexRoute = AuthenticatedMacrosIndexImport.update({
+  id: '/macros/',
+  path: '/macros/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedLiftingIndexRoute = AuthenticatedLiftingIndexImport.update({
+  id: '/lifting/',
+  path: '/lifting/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedCardioIndexRoute = AuthenticatedCardioIndexImport.update({
+  id: '/cardio/',
+  path: '/cardio/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -54,7 +63,7 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+      preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
     '/_authenticated': {
@@ -64,18 +73,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
-    '/main': {
-      id: '/main'
-      path: '/main'
-      fullPath: '/main'
-      preLoaderRoute: typeof MainImport
-      parentRoute: typeof rootRoute
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardImport
+      parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/route1': {
-      id: '/_authenticated/route1'
-      path: '/route1'
-      fullPath: '/route1'
-      preLoaderRoute: typeof AuthenticatedRoute1Import
+    '/_authenticated/cardio/': {
+      id: '/_authenticated/cardio/'
+      path: '/cardio'
+      fullPath: '/cardio'
+      preLoaderRoute: typeof AuthenticatedCardioIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/lifting/': {
+      id: '/_authenticated/lifting/'
+      path: '/lifting'
+      fullPath: '/lifting'
+      preLoaderRoute: typeof AuthenticatedLiftingIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/macros/': {
+      id: '/_authenticated/macros/'
+      path: '/macros'
+      fullPath: '/macros'
+      preLoaderRoute: typeof AuthenticatedMacrosIndexImport
       parentRoute: typeof AuthenticatedImport
     }
   }
@@ -84,11 +107,17 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedRoute1Route: typeof AuthenticatedRoute1Route
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedCardioIndexRoute: typeof AuthenticatedCardioIndexRoute
+  AuthenticatedLiftingIndexRoute: typeof AuthenticatedLiftingIndexRoute
+  AuthenticatedMacrosIndexRoute: typeof AuthenticatedMacrosIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedRoute1Route: AuthenticatedRoute1Route,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedCardioIndexRoute: AuthenticatedCardioIndexRoute,
+  AuthenticatedLiftingIndexRoute: AuthenticatedLiftingIndexRoute,
+  AuthenticatedMacrosIndexRoute: AuthenticatedMacrosIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -96,46 +125,57 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '': typeof AuthenticatedRouteWithChildren
-  '/main': typeof MainRoute
-  '/route1': typeof AuthenticatedRoute1Route
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/cardio': typeof AuthenticatedCardioIndexRoute
+  '/lifting': typeof AuthenticatedLiftingIndexRoute
+  '/macros': typeof AuthenticatedMacrosIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '': typeof AuthenticatedRouteWithChildren
-  '/main': typeof MainRoute
-  '/route1': typeof AuthenticatedRoute1Route
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/cardio': typeof AuthenticatedCardioIndexRoute
+  '/lifting': typeof AuthenticatedLiftingIndexRoute
+  '/macros': typeof AuthenticatedMacrosIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/main': typeof MainRoute
-  '/_authenticated/route1': typeof AuthenticatedRoute1Route
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/cardio/': typeof AuthenticatedCardioIndexRoute
+  '/_authenticated/lifting/': typeof AuthenticatedLiftingIndexRoute
+  '/_authenticated/macros/': typeof AuthenticatedMacrosIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/main' | '/route1'
+  fullPaths: '/' | '' | '/dashboard' | '/cardio' | '/lifting' | '/macros'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/main' | '/route1'
-  id: '__root__' | '/' | '/_authenticated' | '/main' | '/_authenticated/route1'
+  to: '/' | '' | '/dashboard' | '/cardio' | '/lifting' | '/macros'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/cardio/'
+    | '/_authenticated/lifting/'
+    | '/_authenticated/macros/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
+  IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  MainRoute: typeof MainRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
+  IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  MainRoute: MainRoute,
 }
 
 export const routeTree = rootRoute
@@ -149,24 +189,35 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_authenticated",
-        "/main"
+        "/_authenticated"
       ]
     },
     "/": {
-      "filePath": "index.lazy.tsx"
+      "filePath": "index.tsx"
     },
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
-        "/_authenticated/route1"
+        "/_authenticated/dashboard",
+        "/_authenticated/cardio/",
+        "/_authenticated/lifting/",
+        "/_authenticated/macros/"
       ]
     },
-    "/main": {
-      "filePath": "main.tsx"
+    "/_authenticated/dashboard": {
+      "filePath": "_authenticated/dashboard.tsx",
+      "parent": "/_authenticated"
     },
-    "/_authenticated/route1": {
-      "filePath": "_authenticated/route1.tsx",
+    "/_authenticated/cardio/": {
+      "filePath": "_authenticated/cardio/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/lifting/": {
+      "filePath": "_authenticated/lifting/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/macros/": {
+      "filePath": "_authenticated/macros/index.tsx",
       "parent": "/_authenticated"
     }
   }
