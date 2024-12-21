@@ -1,9 +1,10 @@
 import * as React from 'react'
-import { Outlet, createRootRoute, createRootRouteWithContext } from '@tanstack/react-router'
+import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { supabase } from '../service/utils'
+import { AuthStore } from '../service/auth'
 
 export interface AuthRouteContext {
-    auth: any
+    auth: AuthStore | null
 }
 
 export const Route = createRootRouteWithContext<AuthRouteContext>()({
@@ -13,7 +14,7 @@ export const Route = createRootRouteWithContext<AuthRouteContext>()({
         const auth = await supabase.auth.getSession();
         console.log("GET AUTH", auth)
         // look into login screen + redirect -> https://tanstack.com/router/v1/docs/framework/react/guide/authenticated-routes
-        if (auth?.data?.session) {
+        if (auth?.data?.session && context.auth) {
             context.auth.setSession(auth.data.session)
             context.auth.setUser(auth.data.session?.user)
         }
@@ -22,10 +23,12 @@ export const Route = createRootRouteWithContext<AuthRouteContext>()({
 })
 
 function RootComponent() {
+
   return (
     <React.Fragment>
-      <div>Hello "__root"!</div>
-      <Outlet />
+      <div className='w-screen h-screen bg-background text-foreground'>
+        <Outlet />
+      </div>
     </React.Fragment>
   )
 }

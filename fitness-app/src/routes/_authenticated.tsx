@@ -1,4 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
+import { Button } from '../components/ui/button'
+import { supabase } from '../service/utils'
 
 export const Route = createFileRoute('/_authenticated')({
   component: RouteComponent,
@@ -8,12 +10,10 @@ export const Route = createFileRoute('/_authenticated')({
     }
   },
   errorComponent: ({ error }) => {
+    const navigate = useNavigate()
     if (error.message === 'Not authenticated') {
-      return (
-        <div className="flex items-center justify-center p-12">
-          UH OH
-        </div>
-      )
+      navigate({to: "/"})
+      return <div />
     }
 
     throw error
@@ -21,5 +21,11 @@ export const Route = createFileRoute('/_authenticated')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/_authenticated"!</div>
+  return <div className='p-2'>
+    <Button onClick={async () => {
+          await supabase.auth.signOut()
+          window.location.reload();
+      }}>LOGOUT</Button>
+    <Outlet />
+  </div>
 }
