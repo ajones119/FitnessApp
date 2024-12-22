@@ -17,6 +17,7 @@ import { Route as AuthenticatedDashboardImport } from './routes/_authenticated/d
 import { Route as AuthenticatedMacrosIndexImport } from './routes/_authenticated/macros/index'
 import { Route as AuthenticatedLiftingIndexImport } from './routes/_authenticated/lifting/index'
 import { Route as AuthenticatedCardioIndexImport } from './routes/_authenticated/cardio/index'
+import { Route as AuthenticatedLiftingIdIndexImport } from './routes/_authenticated/lifting/$id/index'
 
 // Create/Update Routes
 
@@ -54,6 +55,13 @@ const AuthenticatedCardioIndexRoute = AuthenticatedCardioIndexImport.update({
   path: '/cardio/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+
+const AuthenticatedLiftingIdIndexRoute =
+  AuthenticatedLiftingIdIndexImport.update({
+    id: '/lifting/$id/',
+    path: '/lifting/$id/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -101,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMacrosIndexImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/lifting/$id/': {
+      id: '/_authenticated/lifting/$id/'
+      path: '/lifting/$id'
+      fullPath: '/lifting/$id'
+      preLoaderRoute: typeof AuthenticatedLiftingIdIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
   }
 }
 
@@ -111,6 +126,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCardioIndexRoute: typeof AuthenticatedCardioIndexRoute
   AuthenticatedLiftingIndexRoute: typeof AuthenticatedLiftingIndexRoute
   AuthenticatedMacrosIndexRoute: typeof AuthenticatedMacrosIndexRoute
+  AuthenticatedLiftingIdIndexRoute: typeof AuthenticatedLiftingIdIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -118,6 +134,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCardioIndexRoute: AuthenticatedCardioIndexRoute,
   AuthenticatedLiftingIndexRoute: AuthenticatedLiftingIndexRoute,
   AuthenticatedMacrosIndexRoute: AuthenticatedMacrosIndexRoute,
+  AuthenticatedLiftingIdIndexRoute: AuthenticatedLiftingIdIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -131,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/cardio': typeof AuthenticatedCardioIndexRoute
   '/lifting': typeof AuthenticatedLiftingIndexRoute
   '/macros': typeof AuthenticatedMacrosIndexRoute
+  '/lifting/$id': typeof AuthenticatedLiftingIdIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -140,6 +158,7 @@ export interface FileRoutesByTo {
   '/cardio': typeof AuthenticatedCardioIndexRoute
   '/lifting': typeof AuthenticatedLiftingIndexRoute
   '/macros': typeof AuthenticatedMacrosIndexRoute
+  '/lifting/$id': typeof AuthenticatedLiftingIdIndexRoute
 }
 
 export interface FileRoutesById {
@@ -150,13 +169,28 @@ export interface FileRoutesById {
   '/_authenticated/cardio/': typeof AuthenticatedCardioIndexRoute
   '/_authenticated/lifting/': typeof AuthenticatedLiftingIndexRoute
   '/_authenticated/macros/': typeof AuthenticatedMacrosIndexRoute
+  '/_authenticated/lifting/$id/': typeof AuthenticatedLiftingIdIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/dashboard' | '/cardio' | '/lifting' | '/macros'
+  fullPaths:
+    | '/'
+    | ''
+    | '/dashboard'
+    | '/cardio'
+    | '/lifting'
+    | '/macros'
+    | '/lifting/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/dashboard' | '/cardio' | '/lifting' | '/macros'
+  to:
+    | '/'
+    | ''
+    | '/dashboard'
+    | '/cardio'
+    | '/lifting'
+    | '/macros'
+    | '/lifting/$id'
   id:
     | '__root__'
     | '/'
@@ -165,6 +199,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cardio/'
     | '/_authenticated/lifting/'
     | '/_authenticated/macros/'
+    | '/_authenticated/lifting/$id/'
   fileRoutesById: FileRoutesById
 }
 
@@ -201,7 +236,8 @@ export const routeTree = rootRoute
         "/_authenticated/dashboard",
         "/_authenticated/cardio/",
         "/_authenticated/lifting/",
-        "/_authenticated/macros/"
+        "/_authenticated/macros/",
+        "/_authenticated/lifting/$id/"
       ]
     },
     "/_authenticated/dashboard": {
@@ -218,6 +254,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/macros/": {
       "filePath": "_authenticated/macros/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/lifting/$id/": {
+      "filePath": "_authenticated/lifting/$id/index.tsx",
       "parent": "/_authenticated"
     }
   }
