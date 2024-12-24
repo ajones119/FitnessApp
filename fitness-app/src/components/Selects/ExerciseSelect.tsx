@@ -29,7 +29,7 @@ export const ExerciseSelect: React.FC<Props> = ({ value, onChange }) => {
                             <SelectLabel>{group[0].group?.name || "Ungrouped"}</SelectLabel>
                             {group.map((exercise) => {
                                 return (
-                                    <SelectItem value={exercise.id}>{exercise.name}</SelectItem>
+                                    <SelectItem key={exercise.id} value={exercise.id}>{exercise.name}</SelectItem>
                                 );
                             })}
                         </SelectGroup>

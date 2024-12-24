@@ -1,4 +1,3 @@
-import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../../components/ui/button'
 import { supabase } from '../../service/utils'

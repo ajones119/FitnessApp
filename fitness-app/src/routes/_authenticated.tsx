@@ -21,7 +21,7 @@ export const Route = createFileRoute('/_authenticated')({
 })
 
 function RouteComponent() {
-  return <div className='p-2'>
+  return <div className=''>
     <Button onClick={async () => {
           await supabase.auth.signOut()
           window.location.reload();

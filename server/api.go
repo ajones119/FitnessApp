@@ -109,8 +109,6 @@ func (s *APIServer) Run() {
 }
 
 func (s *APIServer) handleCheckLogin(w http.ResponseWriter, r *http.Request) error {
-
-
 	accessToken := r.Header.Get("Authorization")
 	if accessToken == "" {
 		return fmt.Errorf("missing access token")
@@ -137,6 +135,7 @@ func (s *APIServer) handleCheckLogin(w http.ResponseWriter, r *http.Request) err
 
 	return nil
 }
+
 
 func (s *APIServer) handleAccount(w http.ResponseWriter, r *http.Request) error {
 	if (r.Method == "GET") {
