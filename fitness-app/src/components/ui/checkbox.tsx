@@ -6,6 +6,7 @@ interface CheckboxProps {
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
   icon?: React.ReactNode; // Allows custom icons
+  disabled?: boolean
 }
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -13,11 +14,12 @@ const Checkbox: React.FC<CheckboxProps> = ({
   checked = false,
   onCheckedChange,
   icon,
+  disabled = false,
 }) => {
     return (
         <label
             className={cn(
-            "flex items-center space-x-2 cursor-pointer select-none",
+            "flex items-center space-x-2 cursor-pointer select-none ",
             className
         )}
         >
@@ -28,10 +30,11 @@ const Checkbox: React.FC<CheckboxProps> = ({
                 )}
             >
                 <input
+                disabled={disabled}
                 type="checkbox"
                 checked={checked}
                 onChange={(e) => onCheckedChange?.(e.target.checked)}
-                className="absolute inset-0 opacity-0 cursor-pointer"
+                className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
                 />
             {checked && (icon || <DefaultCheckIcon />)}
             

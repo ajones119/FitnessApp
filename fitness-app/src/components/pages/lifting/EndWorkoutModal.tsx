@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useMutateWorkoutWeightliftingSession } from "../../../service/WorkoutWeightlifting";
 import { Button } from "../../ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader } from "../../ui/dialog";
@@ -9,9 +10,10 @@ type Props = {
 }
 
 const EndWorkoutModal = ({isOpen, handleClose, id}: Props) => {
-  const {mutate, isPending} = useMutateWorkoutWeightliftingSession(() => {
-
-  });
+    const navigate = useNavigate();
+    const {mutate, isPending} = useMutateWorkoutWeightliftingSession(() => {
+        navigate({to: `/lifting/${id}/details`})
+    });
 
     return (
         <Dialog open={isOpen} >

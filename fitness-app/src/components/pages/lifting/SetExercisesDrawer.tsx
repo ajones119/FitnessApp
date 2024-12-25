@@ -67,41 +67,41 @@ const SetExercisesDrawer = ({isOpen, onClose, workoutId}: DrawerProps) => {
     return (
         <Drawer open={isOpen} onClose={onClose}>
             <DrawerContent>
-            <DrawerHeader>
-                <h1>Set Exercises</h1>
-            </DrawerHeader>
-            
-            <div>
-                <Input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
-                {Object.values(exercisesCache.map).filter((exercise) => {
-                    return exercise.name.toLowerCase().includes(search.toLowerCase());
-                }).map((exercise) => {
-                    return (
-                        <div key={exercise.id} className="flex gap-2">
-                            <Checkbox checked={exerciseIds.includes(exercise.id.toString())} onCheckedChange={(checked) => {
-                                if (checked) {
-                                    setExerciseIds([...exerciseIds, exercise.id.toString()]);
-                                } else {
-                                    setExerciseIds(exerciseIds.filter((id) => id !== exercise.id.toString()));
-                                }
-                            }} />
-                            <p onClick={() => {
-                                //recreate checkbox on the title
-                                if (!exerciseIds.includes(exercise.id.toString())) {
-                                    setExerciseIds([...exerciseIds, exercise.id.toString()]);
-                                } else {
-                                    setExerciseIds(exerciseIds.filter((id) => id !== exercise.id.toString()));
-                                }
-                            }}>{exercise.name}</p>
-                        </div>
-                    );
-                })}
-            </div>
-            
-            <DrawerFooter>
-                <Button onClick={handleSave}>Save</Button>
-                <Button onClick={onClose}>Close</Button>
-            </DrawerFooter>
+                <DrawerHeader>
+                    <h1>Set Exercises</h1>
+                </DrawerHeader>
+                
+                <div>
+                    <Input placeholder="search" type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
+                    {Object.values(exercisesCache.map).filter((exercise) => {
+                        return exercise.name.toLowerCase().includes(search.toLowerCase());
+                    }).map((exercise) => {
+                        return (
+                            <div key={exercise.id} className="flex gap-2">
+                                <Checkbox checked={exerciseIds.includes(exercise.id.toString())} onCheckedChange={(checked) => {
+                                    if (checked) {
+                                        setExerciseIds([...exerciseIds, exercise.id.toString()]);
+                                    } else {
+                                        setExerciseIds(exerciseIds.filter((id) => id !== exercise.id.toString()));
+                                    }
+                                }} />
+                                <p onClick={() => {
+                                    //recreate checkbox on the title
+                                    if (!exerciseIds.includes(exercise.id.toString())) {
+                                        setExerciseIds([...exerciseIds, exercise.id.toString()]);
+                                    } else {
+                                        setExerciseIds(exerciseIds.filter((id) => id !== exercise.id.toString()));
+                                    }
+                                }}>{exercise.name}</p>
+                            </div>
+                        );
+                    })}
+                </div>
+                
+                <DrawerFooter>
+                    <Button onClick={handleSave}>Save</Button>
+                    <Button onClick={onClose}>Close</Button>
+                </DrawerFooter>
             </DrawerContent>
         </Drawer>
     )

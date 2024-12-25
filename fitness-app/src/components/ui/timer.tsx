@@ -31,7 +31,7 @@ const Timer: React.FC<TimerProps> = ({ startDate, endDate }) => {
 
     return (
     <div>
-        <p>
+        <p className="text-xs">
         {timeElapsed.hours} hr {" "}
         {timeElapsed.minutes} min
         </p>
