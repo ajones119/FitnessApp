@@ -5,6 +5,7 @@ export type MuscleGroup = {
     id: string;
     name: string;
     parent?: MuscleGroup;
+    chartColor: string
 }
 
 export const useMuscleGroups = () => {

@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
-import { Button } from '../components/ui/button'
-import { supabase } from '../service/utils'
+import {AnimatePresence} from "framer-motion"
+
 
 export const Route = createFileRoute('/_authenticated')({
   component: RouteComponent,
@@ -22,10 +22,16 @@ export const Route = createFileRoute('/_authenticated')({
 
 function RouteComponent() {
   return <div className=''>
-    <Button onClick={async () => {
+    
+    <AnimatePresence presenceAffectsLayout>
+      <Outlet />
+    </AnimatePresence>
+  </div>
+}
+
+/*
+<Button onClick={async () => {
           await supabase.auth.signOut()
           window.location.reload();
       }}>LOGOUT</Button>
-    <Outlet />
-  </div>
-}
+*/

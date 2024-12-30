@@ -11,6 +11,8 @@ import {
 import { routeTree } from './routeTree.gen';
 import "./index.css";
 import useAuthStore from './service/auth';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import {AnimatePresence} from "framer-motion";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,21 +44,24 @@ function App() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} context={{auth}} />
-            <ToastContainer
-              position="bottom-center"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              draggablePercent={60}
-              pauseOnHover
-              theme="colored"
-              transition={Bounce}
-            />
-          </QueryClientProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <AnimatePresence mode="wait">
+          <RouterProvider router={router} context={{auth}} />
+        </AnimatePresence>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          draggablePercent={60}
+          pauseOnHover
+          theme="colored"
+          transition={Bounce}
+        />
+      </QueryClientProvider>
     </>
   )
 }
