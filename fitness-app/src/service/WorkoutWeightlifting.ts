@@ -1,6 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, UseMutationOptions, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "./utils";
-import { useExcercises } from "./WeightExcercises";
+import { PostgrestSingleResponse } from "@supabase/supabase-js";
+import { queryClient } from "../App";
 
 export type WorkoutWeightliftingExercises = {
     id: string;
@@ -10,35 +11,51 @@ export type WorkoutWeightliftingExercises = {
     reps: number;
     weight: number;
     user_id: string;
+    leftReps: number;
+    leftWeight: number;
+    completed: boolean;
 };
 
 export type WorkoutWeightliftingSession = {
     id: string;
     user_id: string;
     created_at: string;
+    finished_at: string | null;
     exercises: {[key: string]: WorkoutWeightliftingExercises[]};
+    name: string;
 }
+
+export type BulkWorkoutWeightliftingSessionSingle = {
+    id: string;
+    user_id: string;
+    created_at: string;
+    finished_at: string | null;
+    exercises: WorkoutWeightliftingExercises[];
+    name: string;
+}
+
+export const workoutWeightliftingSessionsQuery = (user: string, options: {skip: number, limit: number}) => ({
+    queryKey: ["WorkoutWeightliftingSessions", user, options.skip, options.limit],
+    queryFn: async () =>{
+        const response = await supabase.from("Workout_Weightlifting_Sessions").select(`
+            *,
+            exercises: Workout_Weightlifting_Exercises(*)
+        `).eq("user_id", user)
+        .order("created_at", {ascending: false})
+        .range(options.skip, options.limit)
+
+        return response.data as BulkWorkoutWeightliftingSessionSingle[];
+    },
+    //why wont this one refetch when invalidated on another page
+    refetchOnMount: true
+})
 
 export const useWorkoutWeightliftingSessions = (user: string, options: {skip: number, limit: number}) => {
-    const {data: exercises, isLoading} = useExcercises();
-    console.log("EXERCISES", exercises)
-    return useQuery<WorkoutWeightliftingSession[]>({
-        queryKey: ["WorkoutWeightliftingSessions", user, options.skip, options.limit],
-        queryFn: async () =>{
-            const response = await supabase.from("Workout_Weightlifting_Sessions").select(`
-                *,
-                exercises: Workout_Weightlifting_Exercises(*)
-            `).eq("user_id", user).range(options.skip, options.limit)
-            return response.data as WorkoutWeightliftingSession[];
-        },
-        enabled: !isLoading || !user,
-    })
+    return useQuery<BulkWorkoutWeightliftingSessionSingle[]>(workoutWeightliftingSessionsQuery(user, options))
 }
 
-export const useWorkoutWeightliftingSession = (id: string) => {
-    const {data: exercises, isLoading} = useExcercises();
-    console.log("EXERCISES", exercises)
-    return useQuery<WorkoutWeightliftingSession>({
+export const WorkoutWeightliftingSessionQuery = (id: string, disabled = false) => {
+    return {
         queryKey: ["WorkoutWeightliftingSessions", id, ],
         queryFn: async () =>{
             const response = await supabase.from("Workout_Weightlifting_Sessions").select(`
@@ -54,24 +71,43 @@ export const useWorkoutWeightliftingSession = (id: string) => {
                 acc[curr.exercise].push(curr);
                 return acc;
             }, {} as {[key: string]: WorkoutWeightliftingExercises[]})
+            const session = {...rawData, exercises} as WorkoutWeightliftingSession;
+            // sort each exercise by created_at date within the exercise
+            Object.keys(session.exercises).forEach((key) => {
+                session.exercises[key] = session.exercises[key].sort((a, b) => {
+                    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+                })
+            })
 
-            return {...rawData, exercises} as WorkoutWeightliftingSession;
+            return session;
         },
-        enabled: !isLoading || !id,
-    })
+        enabled: !!id && !disabled,
+    }
 }
 
-export const useMutateWorkoutWeightliftingSession = () => {
+export const useWorkoutWeightliftingSession = (id: string) => {
+    return useQuery<WorkoutWeightliftingSession>(WorkoutWeightliftingSessionQuery(id));
+}
+
+export const useWorkoutWeightliftingSessionPrefetch = (id: string) => {
+    return () => queryClient.prefetchQuery(WorkoutWeightliftingSessionQuery(id));
+}
+
+export const useMutateWorkoutWeightliftingSession = (onSuccess?: (id?: string) => void) => {
     const queryCache = useQueryClient();
 
     return useMutation({
         mutationKey: ["WorkoutWeightliftingSession"],
         mutationFn: async (session: Partial<WorkoutWeightliftingSession>) => {
-            const response = await supabase.from("Workout_Weightlifting_Sessions").upsert(session)
-            return response
+            const response = await supabase.from("Workout_Weightlifting_Sessions").upsert(session).select('id');
+            return response;
         },
-        onSuccess: () => {
-            queryCache.invalidateQueries({queryKey: ["WorkoutWeightliftingSessions"]})
+        onSuccess: (data) => {
+            console.log('invalidate hook')
+            queryCache.invalidateQueries({queryKey: ["WorkoutWeightliftingSessions"]});
+            const id = data?.data?.length ? data?.data[0]?.id : '';
+            onSuccess && onSuccess(id);
+            
         }
     })
 }
@@ -84,18 +120,55 @@ export type WorkoutWeightliftingExercisesMutation = {
     reps: number;
     weight: number;
     user_id: string;
+    leftReps: number;
+    leftWeight: number;
+    completed: boolean;
 };
 
-export const useMutateWorkoutWeightliftingSessionExercise = () => {
+export const useMutateWorkoutWeightliftingSessionExercises = () => {
     const queryCache = useQueryClient();
 
     return useMutation({
-        mutationKey: ["WorkoutWeightliftingSessionExercise"],
-        mutationFn: async (exercise: Partial<WorkoutWeightliftingExercisesMutation>) => {
-            const response = await supabase.from("Workout_Weightlifting_Exercises").upsert(exercise)
+        mutationKey: ["WorkoutWeightliftingSessionExercises"],
+        mutationFn: async (exercises: Partial<WorkoutWeightliftingExercisesMutation>[]) => {
+            const response = await supabase.from("Workout_Weightlifting_Exercises").upsert([...exercises])
+            return response;
+        },
+        onSuccess: () => {
+            console.log("Should invalidate here")
+            queryCache.invalidateQueries({queryKey: ["WorkoutWeightliftingSessions"]});
+        },
+        
+    })
+}
+
+export const useDeleteWorkoutWeightliftingSessionExercises = () => {
+    const queryCache = useQueryClient();
+
+    return useMutation({
+        mutationKey: ["WorkoutWeightliftingSessionExercises"],
+        mutationFn: async (ids: string[]) => {
+            queryCache.invalidateQueries({queryKey: ["WorkoutWeightliftingSessions"]});
+            const response = await supabase.from("Workout_Weightlifting_Exercises").delete().in("id", ids)
             return response
         },
         onSuccess: () => {
+            queryCache.invalidateQueries({queryKey: ["WorkoutWeightliftingSessions"]})
+        }
+    })
+}
+
+export const useBulkDeleteWorkoutWeightliftingSessionExercises = (options?: Partial<UseMutationOptions<PostgrestSingleResponse<null>, unknown, any, unknown>>) => {
+    const queryCache = useQueryClient();
+
+    return useMutation<PostgrestSingleResponse<null>, unknown, any, unknown>({
+        mutationKey: ["WorkoutWeightliftingSessionExercises"],
+        mutationFn: async (exercises: Array<{workout: string, exercise: string}>) => {
+            const response = await supabase.from("Workout_Weightlifting_Exercises").delete().in("workout", exercises.map((e) => e.workout)).in("exercise", exercises.map((e) => e.exercise))
+            return response
+        },
+        onSuccess: (data, variables, context) => {
+            options?.onSuccess && options.onSuccess(data, variables, context)
             queryCache.invalidateQueries({queryKey: ["WorkoutWeightliftingSessions"]})
         }
     })

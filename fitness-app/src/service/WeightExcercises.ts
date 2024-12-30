@@ -7,6 +7,7 @@ export type WeightExercises = {
     name: string;
     user?: string;
     group?: MuscleGroup | null;
+    unilateral: boolean;
 }
 
 export type ExerciseCache = {
