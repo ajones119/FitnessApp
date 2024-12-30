@@ -11,7 +11,7 @@ function RouteComponent() {
     select: (context) => context?.auth?.session,
   })
   return (
-    <div className="w-screen bg-background text-foreground p-4">
+    <div className="w-full bg-background text-foreground p-4">
       <div className="flex justify-center">
         {!session ? (
           <LoginForm />

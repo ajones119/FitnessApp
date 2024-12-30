@@ -2,7 +2,6 @@ import * as React from 'react'
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { supabase } from '../service/utils'
 import { AuthStore } from '../service/auth'
-import { useTestGoServer } from '../service/testGoServer'
 
 export interface AuthRouteContext {
   auth: AuthStore | null
@@ -24,12 +23,10 @@ export const Route = createRootRouteWithContext<AuthRouteContext>()({
 })
 
 function RootComponent() {
-  const { data: test} = useTestGoServer();
 
-  console.log("Test", test);
   return (
     <React.Fragment>
-      <div className='w-screen h-full bg-background text-foreground'>
+      <div className='relative w-full h-full  text-foreground overflow-hidden removeScrollbar'>
         <Outlet />
       </div>
     </React.Fragment>
