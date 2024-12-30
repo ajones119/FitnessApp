@@ -1,7 +1,8 @@
-import { useMutation, UseMutationOptions, useQuery, useQueryClient } from "@tanstack/react-query";
+import { InfiniteData, useInfiniteQuery, useMutation, UseMutationOptions, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "./utils";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { queryClient } from "../App";
+import useAuthStore from "./auth";
 
 export type WorkoutWeightliftingExercises = {
     id: string;
@@ -135,7 +136,6 @@ export const useMutateWorkoutWeightliftingSessionExercises = () => {
             return response;
         },
         onSuccess: () => {
-            console.log("Should invalidate here")
             queryCache.invalidateQueries({queryKey: ["WorkoutWeightliftingSessions"]});
         },
         
@@ -172,4 +172,33 @@ export const useBulkDeleteWorkoutWeightliftingSessionExercises = (options?: Part
             queryCache.invalidateQueries({queryKey: ["WorkoutWeightliftingSessions"]})
         }
     })
+}
+
+export const useWorkoutSessionsInfiniteScroll = () => {
+    const {user} = useAuthStore();
+
+    const query = useInfiniteQuery<BulkWorkoutWeightliftingSessionSingle[], Error, InfiniteData<BulkWorkoutWeightliftingSessionSingle[], number>, any[], number>({
+        queryKey: ['WorkoutWeightliftingSessions'],
+        refetchOnMount: true,
+        enabled: !!user?.id,
+        initialPageParam: 0,
+        queryFn: async ({pageParam = 0}) => {
+            const skip: number= pageParam as number ?? 0
+            const response = await supabase.from("Workout_Weightlifting_Sessions").select(`
+                *,
+                exercises: Workout_Weightlifting_Exercises(*)
+            `)
+            .order("created_at", {ascending: false})
+            .range(skip, skip+2)
+    
+            return response.data as BulkWorkoutWeightliftingSessionSingle[];
+        },
+        getNextPageParam: (_lastPage, allPages) => {
+            return _lastPage?.length > 2 ? allPages?.flatMap(m => m).length : undefined;
+        },
+    })
+
+    const results = query?.data?.pages.flatMap(page => page);
+
+    return {...query, results};
 }

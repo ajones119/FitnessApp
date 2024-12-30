@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
 import {AnimatePresence} from "framer-motion"
 
-
 export const Route = createFileRoute('/_authenticated')({
   component: RouteComponent,
   beforeLoad: ({context}) => {

@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/cors"
@@ -16,34 +14,6 @@ import (
 	"github.com/supabase-community/supabase-go"
 )
 
-func validateSession(accessToken string) (bool, error) {
-	supabaseURL := os.Getenv("DATABASE_URL")
-	if supabaseURL == "" {
-		return false, fmt.Errorf("DATABASE_URL is not set")
-	}
-
-	client := resty.New()
-	log.Println("\n\n\nValidating session with access token:", accessToken)
-	log.Println("Supabase URL: ", supabaseURL)
-	resp, err := client.R().
-		SetHeader("Authorization", accessToken).
-		SetAuthToken(accessToken).
-		SetBody(map[string]string{"email": "agj1113@gmail.com", "type": "email"}).
-		Post(fmt.Sprintf("%s/auth/v1/verify", supabaseURL))
-
-	//print response
-	log.Println("Response: ", resp)
-
-	if err != nil {
-		return false, err
-	}
-
-	if resp.StatusCode() == http.StatusOK {
-		return true, nil
-	}
-
-	return false, fmt.Errorf("invalid session, status code: %d", resp.StatusCode())
-}
 
 func WriteJSON(w http.ResponseWriter, status int, v any) error {
 	w.Header().Set("Content-Type", "application/json") // Ensure response is JSON
@@ -69,7 +39,7 @@ type APIServer struct {
 	listenAddr string
 	dbpool *pgxpool.Pool
 	supabaseClient *supabase.Client
-	user  *types.UserResponse
+	user  *types.User
 }
 
 func NewAPIServer(listenAddr string, dbpool *pgxpool.Pool, supabaseClient *supabase.Client) *APIServer {
@@ -83,9 +53,8 @@ func NewAPIServer(listenAddr string, dbpool *pgxpool.Pool, supabaseClient *supab
 func (s *APIServer) Run() {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/account", makeHTTPHandleFunc(s.handleAccount))
-	router.HandleFunc("/account/{id}", makeHTTPHandleFunc(s.handleGetAccount))
 	router.HandleFunc("/check-login", makeHTTPHandleFunc(s.handleCheckLogin))
+	router.HandleFunc("/aggregate/exercises", makeHTTPHandleFunc(s.handleAggregateExercise))
 
     // Handle preflight OPTIONS requests
     router.Methods(http.MethodOptions).HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -128,6 +97,8 @@ func (s *APIServer) handleCheckLogin(w http.ResponseWriter, r *http.Request) err
 
 	//print user
 	log.Println("User: ", user.User.ID)
+	//set user
+	s.user = &user.User;
 
 	if err != nil {
 		return err
@@ -136,6 +107,23 @@ func (s *APIServer) handleCheckLogin(w http.ResponseWriter, r *http.Request) err
 	return nil
 }
 
+func (s *APIServer) handleAggregateExercise(w http.ResponseWriter, r *http.Request) error {
+	err := s.handleCheckLogin(w, r);
+	if (err != nil) {
+		return err;
+	}
+
+	oneRepMaxes, err := getWeightliftingAggregateForTheWeek(s.dbpool, s.user.ID.String())
+
+	if err != nil {
+		return err // Return an error if the query fails
+	}
+
+	return WriteJSON(w, http.StatusOK, oneRepMaxes);
+}
+
+/*
+REFERENCE EXAMPLE FOR ARAMIS
 
 func (s *APIServer) handleAccount(w http.ResponseWriter, r *http.Request) error {
 	if (r.Method == "GET") {
@@ -168,3 +156,4 @@ func (s *APIServer) handleDeleteAccount(w http.ResponseWriter, r *http.Request) 
 func (s *APIServer) handleTransferAccount(w http.ResponseWriter, r *http.Request) error {
 	return nil;
 }
+*/

@@ -13,12 +13,21 @@
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
+  width: 100%;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+
+.removeScrollbar {
+  overflow: auto; /* or scroll if you want to force scrollbars */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
 a {
   font-weight: 500;
   color: #646cff;

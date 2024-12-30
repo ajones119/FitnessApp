@@ -44,7 +44,7 @@ function App() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} />
+        <ReactQueryDevtools initialIsOpen={false} position={'bottom'} buttonPosition={'bottom-left'} />
         <AnimatePresence mode="wait">
           <RouterProvider router={router} context={{auth}} />
         </AnimatePresence>
