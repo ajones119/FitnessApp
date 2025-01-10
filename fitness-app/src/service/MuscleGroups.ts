@@ -4,7 +4,7 @@ import { supabase } from "./utils";
 export type MuscleGroup = {
     id: string;
     name: string;
-    parent?: MuscleGroup;
+    parentGroup?: MuscleGroup;
     chartColor: string
 }
 

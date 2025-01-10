@@ -37,7 +37,7 @@ function RouteComponent() {
             data={results || []}
             itemContent={(_, workout) => {
               return (<div className="mb-2">
-                    <motion.div key={workout.id} initial={{x: -20, opacity: 0}} animate={{x: 0, opacity: 1}}>
+                    <motion.div key={workout.id} initial={{x: -20, opacity: 0}} animate={{x: 0, opacity: 1}} transition={{delay: (Number(workout.id)%10)/40}}>
                       <WorkoutSessionRow session={workout} />
                     </motion.div>
               </div>)

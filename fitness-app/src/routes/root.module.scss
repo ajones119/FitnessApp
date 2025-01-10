@@ -1,0 +1,30 @@
+
+
+.snowflake {
+    width: 3px;
+    height: 3px;
+    position: absolute;
+    background-color: var(--foreground);
+    border-radius: 50%;
+    animation: snow 6s linear infinite,
+    wind 10s ease-in-out infinite;
+    top: -2%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+
+    &:nth-child(2n+3) {
+        width: 7px;
+        height: 7px;
+    }
+}
+
+@keyframes snow {
+    100% {
+        top: 100%;
+    }
+}
+
+@keyframes wind {
+    50% {
+        transform: translateX(120px);
+    }
+}

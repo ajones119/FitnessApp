@@ -9,6 +9,7 @@ import Checkbox from "../../ui/checkbox";
 import { motion, AnimatePresence } from "framer-motion";
 import { Separator } from "../../ui/seperator";
 import ExtendedExerciseSection from "./ExtendedExerciseSection";
+import { Link } from "@tanstack/react-router";
 
 
 type ExerciseSectionProps = {
@@ -46,7 +47,7 @@ const ExerciseSection = ({exercises, disabled = false, canShowCalculated = false
     >
         <div className="flex gap-2 justify-between items-top">
             <div>
-                <h3>{exercisesCache.map[firstExercise.exercise].name || "Unnamed"}</h3>
+                <Link to={`/lifting/exercise/${firstExercise.exercise}`}><h3>{exercisesCache.map[firstExercise.exercise].name || "Unnamed"}</h3></Link>
                 <p>{exercisesCache.map[firstExercise.exercise].group?.name}</p>
                 {exercisesCache.map[firstExercise.exercise].unilateral && !disabled &&
                     <div className="flex gap-1 items-center">
