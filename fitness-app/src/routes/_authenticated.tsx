@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
 import {AnimatePresence} from "framer-motion"
+import { useUserExerciseAggregate } from '../service/user'
 
 export const Route = createFileRoute('/_authenticated')({
   component: RouteComponent,
@@ -20,6 +21,10 @@ export const Route = createFileRoute('/_authenticated')({
 })
 
 function RouteComponent() {
+  const {data} = useUserExerciseAggregate();
+
+  console.log("data", data)
+
   return <div className=''>
     
     <AnimatePresence presenceAffectsLayout>

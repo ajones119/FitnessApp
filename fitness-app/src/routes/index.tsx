@@ -1,9 +1,12 @@
 import { createFileRoute, Link, useRouteContext } from '@tanstack/react-router'
 import LoginForm from '../components/loginForm/loginForm'
-
+import css from './root.module.scss'; 
+import ExampleSprite from '../components/spriteAnimation/exampleSprite';
+import ToggleSVG from '../components/svgs/toggle';
 export const Route = createFileRoute('/')({
   component: RouteComponent,
 })
+
 
 function RouteComponent() {
   const session = useRouteContext({
@@ -12,12 +15,18 @@ function RouteComponent() {
   })
   return (
     <div className="w-full bg-background text-foreground p-4">
-      <div className="flex justify-center">
+      <div className='inset-0 overflow-hidden flex w-screen h-screen fixed top-0 left-0 justify-center items-center pointer-events-none'>
+        {Array.from({ length: 200 }).map((_, i) => (
+          <div key={i} className={css.snowflake} style={{left: `${i}%`, animationDelay: `${Math.random() * (10 - 0.1) + 0.1}s`}} />
+        ))}
+      </div>
+      <div className="flex justify-center relative">
         {!session ? (
           <LoginForm />
         ) : (
           <Link to="/dashboard">View Dashboard</Link>
         )}
+        
       </div>
     </div>
   )

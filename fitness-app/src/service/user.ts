@@ -1,10 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 import { SERVER_URL, useServerAuth } from "./utils";
 
+type LiftingVolume = {
+    exerciseId: number,
+    exerciseInstanceCount: number,
+    mgId: number,
+    muscleGroup: string,
+    parentMuscleGroupId: string,
+    totalVolume: number
+}
+
+export type UserExerciseAggregate = {
+    lifting: Array<LiftingVolume>
+}
+
 export const useUserExerciseAggregate = () => {
     const standardToken = useServerAuth();
 
-    return useQuery<any>({
+    return useQuery<UserExerciseAggregate>({
         queryKey: ["aggregate"],
         queryFn: async () =>{
             // get from localhost:3000/account
@@ -12,9 +25,9 @@ export const useUserExerciseAggregate = () => {
             const response = await fetch(SERVER_URL + 'aggregate/exercises', {
                 method: "GET",
                 ...standardToken
-            })
-            console.log("RESPONSE Aggregate", response)
-            return response;
+            });
+            const data = response.json()
+            return data;
         }
     })
 }

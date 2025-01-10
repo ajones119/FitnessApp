@@ -1,8 +1,9 @@
 import { InfiniteData, useInfiniteQuery, useMutation, UseMutationOptions, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "./utils";
+import { SERVER_URL, supabase, useServerAuth } from "./utils";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { queryClient } from "../App";
 import useAuthStore from "./auth";
+import { MuscleGroup } from "./MuscleGroups";
 
 export type WorkoutWeightliftingExercises = {
     id: string;
@@ -201,4 +202,46 @@ export const useWorkoutSessionsInfiniteScroll = () => {
     const results = query?.data?.pages.flatMap(page => page);
 
     return {...query, results};
+}
+
+export type ExerciseDetails = {
+    details: {
+        id: string,
+        name: string,
+        group: MuscleGroup,
+        bodyWeight: boolean,
+        unilateral: boolean
+    },
+    totalNumberOfSets: number,
+    highestVolume: number,
+    largestOneRepMax: number,
+    largestORMWorkout: number,
+    lastOneHundredDaysOneRepMaxes: Array<{
+        workout_date: string,
+        highestORM: number
+    }>,
+    lastOneHundredDaysVolumes: Array<{
+        workout_date: string,
+        highestVolume: number
+    }>
+
+
+}
+
+export const useWorkoutExerciseData = (id: string) => {
+const standardToken = useServerAuth();
+
+    return useQuery<ExerciseDetails>({
+        queryKey: ['weightlifting', id],
+        refetchOnMount: false,
+        queryFn: async () =>{
+            // get from localhost:3000/account
+            const response = await fetch(SERVER_URL + `aggregate/exercises/${id}`, {
+                method: "GET",
+                ...standardToken
+            });
+            const data = response.json()
+            return data;
+        }
+    })
 }

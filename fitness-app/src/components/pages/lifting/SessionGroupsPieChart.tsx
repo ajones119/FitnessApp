@@ -1,7 +1,7 @@
 import {WorkoutWeightliftingSession } from "../../../service/WorkoutWeightlifting"
 import { Label, LabelList, Pie, PieChart } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../ui/chart"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useExcercises } from "../../../service/WeightExcercises"
 import { MuscleGroup, useMuscleGroups } from "../../../service/MuscleGroups"
 
@@ -10,10 +10,10 @@ type Props = {
 }
 
 const SessionGroupsPieChart = ({session}: Props) => {
+    const [viewParent, setViewParent] = useState(true);
     const {data: groups, isLoading: isGroupsLoading} = useMuscleGroups();
     const {data: exerciseCache, isLoading} = useExcercises();
     const [config, data, totalExercises] = useMemo(() => {
-        console.log(groups)
         if (!groups || !exerciseCache) {
             return [{}, [], 0]
         }
@@ -55,11 +55,53 @@ const SessionGroupsPieChart = ({session}: Props) => {
 
     }, [session?.id, isGroupsLoading, isLoading])
 
+    const [parentConfig, parentData] = useMemo(() => {
+        if (!groups || !exerciseCache) {
+            return [{}, [], 0]
+        }
+        const {map} = exerciseCache;
+        const config = groups.reduce((acc: {[key: string]: MuscleGroup & {label: string}}, current: MuscleGroup) => {
+
+            if (!acc[current.id]) {
+                acc = {...acc, [current.id]: {...current, label: current.name}}
+            }
+
+            return acc;
+        }, {})
+
+        const rawData = Object.values(session.exercises).map(exerciseList => {
+            const completedList = exerciseList.filter(e => !!e?.completed)
+            console.log(map[completedList[0]?.exercise]?.group)
+            return ({
+                muscleGroup: map[completedList[0]?.exercise]?.group?.parentGroup || map[completedList[0]?.exercise]?.group?.id,
+                sets: completedList.length,
+                fill: map[completedList[0]?.exercise]?.group?.chartColor
+            })})
+
+        const normalizedData = rawData.reduce((acc: any, current: any) => {
+            // Find an existing entry with the same muscleGroup
+            const existingEntry = acc.find((item: any) => item.muscleGroup === current.muscleGroup);
+
+            if (existingEntry) {
+              // If an entry exists, add the sets to it
+                existingEntry.sets += current.sets;
+            } else {
+              // If no entry exists, add a new one
+                acc.push({ ...current });
+            }
+
+            return acc;
+        }, []);
+        return [config, normalizedData]
+
+    }, [session?.id, isGroupsLoading, isLoading])
+
     return (
         <div className="w-10/12 m-auto relative">
             <ChartContainer
-                config={config}
-                className="mx-auto aspect-square max-h-[250px]"
+                config={viewParent ? parentConfig : config}
+                className="mx-auto aspect-square max-h-[250px] !cursor-pointer"
+                onClick={() => setViewParent(!viewParent)}
                 >
             <PieChart>
                 <ChartTooltip
@@ -67,11 +109,13 @@ const SessionGroupsPieChart = ({session}: Props) => {
                 content={<ChartTooltipContent />}
                 />
                 <Pie
-                data={data}
+                data={viewParent ? parentData : data}
                 dataKey="sets"
                 nameKey="muscleGroup"
                 innerRadius={50}
                 strokeWidth={5}
+                className="cursor-pointer"
+
                 >
                     <LabelList
                         dataKey="muscleGroup"

@@ -18,6 +18,7 @@ import { Route as AuthenticatedMacrosIndexImport } from './routes/_authenticated
 import { Route as AuthenticatedLiftingIndexImport } from './routes/_authenticated/lifting/index'
 import { Route as AuthenticatedCardioIndexImport } from './routes/_authenticated/cardio/index'
 import { Route as AuthenticatedLiftingIdIndexImport } from './routes/_authenticated/lifting/$id/index'
+import { Route as AuthenticatedLiftingExerciseIdImport } from './routes/_authenticated/lifting/exercise/$id'
 import { Route as AuthenticatedLiftingIdDetailsImport } from './routes/_authenticated/lifting/$id/details'
 
 // Create/Update Routes
@@ -61,6 +62,13 @@ const AuthenticatedLiftingIdIndexRoute =
   AuthenticatedLiftingIdIndexImport.update({
     id: '/lifting/$id/',
     path: '/lifting/$id/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedLiftingExerciseIdRoute =
+  AuthenticatedLiftingExerciseIdImport.update({
+    id: '/lifting/exercise/$id',
+    path: '/lifting/exercise/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -124,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLiftingIdDetailsImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/lifting/exercise/$id': {
+      id: '/_authenticated/lifting/exercise/$id'
+      path: '/lifting/exercise/$id'
+      fullPath: '/lifting/exercise/$id'
+      preLoaderRoute: typeof AuthenticatedLiftingExerciseIdImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/lifting/$id/': {
       id: '/_authenticated/lifting/$id/'
       path: '/lifting/$id'
@@ -142,6 +157,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedLiftingIndexRoute: typeof AuthenticatedLiftingIndexRoute
   AuthenticatedMacrosIndexRoute: typeof AuthenticatedMacrosIndexRoute
   AuthenticatedLiftingIdDetailsRoute: typeof AuthenticatedLiftingIdDetailsRoute
+  AuthenticatedLiftingExerciseIdRoute: typeof AuthenticatedLiftingExerciseIdRoute
   AuthenticatedLiftingIdIndexRoute: typeof AuthenticatedLiftingIdIndexRoute
 }
 
@@ -151,6 +167,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedLiftingIndexRoute: AuthenticatedLiftingIndexRoute,
   AuthenticatedMacrosIndexRoute: AuthenticatedMacrosIndexRoute,
   AuthenticatedLiftingIdDetailsRoute: AuthenticatedLiftingIdDetailsRoute,
+  AuthenticatedLiftingExerciseIdRoute: AuthenticatedLiftingExerciseIdRoute,
   AuthenticatedLiftingIdIndexRoute: AuthenticatedLiftingIdIndexRoute,
 }
 
@@ -166,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/lifting': typeof AuthenticatedLiftingIndexRoute
   '/macros': typeof AuthenticatedMacrosIndexRoute
   '/lifting/$id/details': typeof AuthenticatedLiftingIdDetailsRoute
+  '/lifting/exercise/$id': typeof AuthenticatedLiftingExerciseIdRoute
   '/lifting/$id': typeof AuthenticatedLiftingIdIndexRoute
 }
 
@@ -177,6 +195,7 @@ export interface FileRoutesByTo {
   '/lifting': typeof AuthenticatedLiftingIndexRoute
   '/macros': typeof AuthenticatedMacrosIndexRoute
   '/lifting/$id/details': typeof AuthenticatedLiftingIdDetailsRoute
+  '/lifting/exercise/$id': typeof AuthenticatedLiftingExerciseIdRoute
   '/lifting/$id': typeof AuthenticatedLiftingIdIndexRoute
 }
 
@@ -189,6 +208,7 @@ export interface FileRoutesById {
   '/_authenticated/lifting/': typeof AuthenticatedLiftingIndexRoute
   '/_authenticated/macros/': typeof AuthenticatedMacrosIndexRoute
   '/_authenticated/lifting/$id/details': typeof AuthenticatedLiftingIdDetailsRoute
+  '/_authenticated/lifting/exercise/$id': typeof AuthenticatedLiftingExerciseIdRoute
   '/_authenticated/lifting/$id/': typeof AuthenticatedLiftingIdIndexRoute
 }
 
@@ -202,6 +222,7 @@ export interface FileRouteTypes {
     | '/lifting'
     | '/macros'
     | '/lifting/$id/details'
+    | '/lifting/exercise/$id'
     | '/lifting/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -212,6 +233,7 @@ export interface FileRouteTypes {
     | '/lifting'
     | '/macros'
     | '/lifting/$id/details'
+    | '/lifting/exercise/$id'
     | '/lifting/$id'
   id:
     | '__root__'
@@ -222,6 +244,7 @@ export interface FileRouteTypes {
     | '/_authenticated/lifting/'
     | '/_authenticated/macros/'
     | '/_authenticated/lifting/$id/details'
+    | '/_authenticated/lifting/exercise/$id'
     | '/_authenticated/lifting/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -261,6 +284,7 @@ export const routeTree = rootRoute
         "/_authenticated/lifting/",
         "/_authenticated/macros/",
         "/_authenticated/lifting/$id/details",
+        "/_authenticated/lifting/exercise/$id",
         "/_authenticated/lifting/$id/"
       ]
     },
@@ -282,6 +306,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/lifting/$id/details": {
       "filePath": "_authenticated/lifting/$id/details.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/lifting/exercise/$id": {
+      "filePath": "_authenticated/lifting/exercise/$id.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/lifting/$id/": {
