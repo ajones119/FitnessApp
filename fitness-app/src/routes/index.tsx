@@ -1,8 +1,6 @@
 import { createFileRoute, Link, useRouteContext } from '@tanstack/react-router'
 import LoginForm from '../components/loginForm/loginForm'
 import css from './root.module.scss'; 
-import ExampleSprite from '../components/spriteAnimation/exampleSprite';
-import ToggleSVG from '../components/svgs/toggle';
 export const Route = createFileRoute('/')({
   component: RouteComponent,
 })
